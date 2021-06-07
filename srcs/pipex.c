@@ -6,7 +6,7 @@
 /*   By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 20:37:16 by rcabezas          #+#    #+#             */
-/*   Updated: 2021/06/07 21:06:00 by rcabezas         ###   ########.fr       */
+/*   Updated: 2021/06/07 21:29:23 by rcabezas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 void    arguments(t_pipex *ps, int argc, char **argv)
 {
-    if (argc != 6)
+    if (argc != 5)
     {
         ft_putstr("Error\n");
-        return (0);
+        exit(EXIT_SUCCESS);
     }
-    ft_strcpy(ps->archive_one, argv[1]);
-    ft_strcpy(ps->cmd_one, argv[2]);
-    ft_strcpy(ps->cmd_two, argv[4]);
-    ft_strcpy(ps->archive_two, argv[5]);
+    ps->archive_one = ft_strdup(argv[1]);
+    ps->cmd_one = ft_strdup(argv[2]);
+    ps->cmd_two = ft_strdup(argv[3]);
+    ps->archive_two = ft_strdup(argv[4]);
     
 }
 
