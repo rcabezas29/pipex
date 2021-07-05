@@ -6,7 +6,7 @@
 /*   By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 20:31:01 by rcabezas          #+#    #+#             */
-/*   Updated: 2021/06/30 17:02:14 by rcabezas         ###   ########.fr       */
+/*   Updated: 2021/07/05 16:27:38 by rcabezas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ typedef struct  s_pipex
     char    *cmd_one;
     char    *cmd_two;
     char    **paths;
+    int     file1;
+    int     file2;
 }               t_pipex;
 
 int	    main(int argc, char **argv, char **envp);
@@ -30,4 +32,5 @@ void    arguments(t_pipex *ps, int argc, char **argv);
 void    take_paths(t_pipex *ps, char **envp);
 void    exec_cmd1(t_pipex *ps, int fd[2], char **envp);
 void    exec_cmd2(t_pipex *ps, int fd[2], char **envp);
+char    *cmd_path(t_pipex *ps, char *cmd, char **envp);
 #endif
