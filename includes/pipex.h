@@ -6,7 +6,7 @@
 /*   By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 20:31:01 by rcabezas          #+#    #+#             */
-/*   Updated: 2021/07/05 16:27:38 by rcabezas         ###   ########.fr       */
+/*   Updated: 2021/07/06 15:21:37 by rcabezas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include "../libft/includes/libft.h"
 # include <unistd.h>
+# include <sys/types.h>
+# include <signal.h>
+
+#define READ_END    0
+#define WRITE_END   1
 
 typedef struct  s_pipex
 {
