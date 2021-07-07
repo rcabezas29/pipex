@@ -6,14 +6,14 @@
 #    By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/07 20:22:18 by rcabezas          #+#    #+#              #
-#    Updated: 2021/07/05 16:14:46 by rcabezas         ###   ########.fr        #
+#    Updated: 2021/07/07 19:24:14 by rcabezas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 CC = gcc
-CFLAGS = -Werror -Wextra -Wall -g
+CFLAGS = -Werror -Wextra -Wall
 
 SRCS_PIPX = pipex.c
 

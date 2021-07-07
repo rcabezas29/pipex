@@ -6,34 +6,38 @@
 /*   By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 20:37:16 by rcabezas          #+#    #+#             */
-/*   Updated: 2021/07/06 15:44:59 by rcabezas         ###   ########.fr       */
+/*   Updated: 2021/07/07 21:20:24 by rcabezas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pipex.h>
 
-char	*cmd_path(t_pipex *ps, char *cmd, char *envp[])
+char	*cmd_path(t_pipex *ps, char *cmd)
 {
 	char	*path;
 	char	*tmp;
 	int		i;
+	int		check_path;
 
 	path = NULL;
 	i = 0;
 	while (ps->paths[i])
 	{
 		tmp = ft_strjoin(ft_strjoin(ps->paths[i], "/"), cmd);
-		if (execve(path, ft_split(ps->cmd_one, ' '), envp) == 127)
+		check_path = open(tmp, O_RDONLY);
+		if (check_path < 0)
 			i++;
 		else
+		{
 			path = tmp;
+			break ;
+		}
 	}
 	if (!tmp)
 	{
 		ft_putstr(ft_strjoin(cmd, ": command not found"));
 		exit(EXIT_SUCCESS);
 	}
-	printf("PATH: %s\n", path);
 	return (path);
 }
 
@@ -49,7 +53,7 @@ void	exec_cmd1(t_pipex *ps, int fd[2], char *envp[])
 	dup2(ps->file1, STDIN_FILENO);
 	dup2(fd[WRITE_END], STDOUT_FILENO);
 	close(fd[WRITE_END]);
-	execve(cmd_path(ps, ps->cmd_one, envp), ft_split(ps->cmd_one, ' '), envp);
+	execve(cmd_path(ps, ps->cmd_one), ft_split(ps->cmd_one, ' '), envp);
 }
 
 void	exec_cmd2(t_pipex *ps, int fd[2], char **envp)
@@ -63,12 +67,12 @@ void	exec_cmd2(t_pipex *ps, int fd[2], char **envp)
 	dup2(fd[READ_END], STDIN_FILENO);
 	close(fd[READ_END]);
 	dup2(ps->file2, STDOUT_FILENO);
-	execve(cmd_path(ps, ps->cmd_two, envp), ft_split(ps->cmd_two, ' '), envp);
+	execve(cmd_path(ps, ps->cmd_two), ft_split(ps->cmd_two, ' '), envp);
 }
 
 void	take_paths(t_pipex *ps, char *envp[])
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (envp[i])
@@ -92,12 +96,12 @@ void	arguments(t_pipex *ps, int argc, char **argv)
 	ps->archive_two = ft_strdup(argv[4]);
 }
 
-int		main(int argc, char **argv, char *envp[])
+int	main(int argc, char **argv, char *envp[])
 {
 	t_pipex	*ps;
 	int		fd[2];
 	int		pid;
-	//int		status;
+	int		status;
 
 	ps = ft_calloc(4, sizeof(t_pipex));
 	pipe(fd);
@@ -113,12 +117,9 @@ int		main(int argc, char **argv, char *envp[])
 		if (pid == 0)
 			exec_cmd2(ps, fd, envp);
 		else
-			close(fd[0]);
+			close(fd[READ_END]);
 	}
-	//waitpid(pid, &status, WNOHANG);
-	//waitpid(pid, &status, WNOHANG);
-	//wait(&status);
-	//wait(&status);
+	waitpid(pid, &status, WNOHANG);
 	close(ps->file1);
 	close(ps->file2);
 	return (0);
