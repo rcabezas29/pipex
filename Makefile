@@ -6,7 +6,7 @@
 #    By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/07 20:22:18 by rcabezas          #+#    #+#              #
-#    Updated: 2021/07/07 19:24:14 by rcabezas         ###   ########.fr        #
+#    Updated: 2021/07/08 11:06:26 by rcabezas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = pipex
 CC = gcc
 CFLAGS = -Werror -Wextra -Wall
 
-SRCS_PIPX = pipex.c
+SRCS_PIPX = pipex.c path.c
 
 PIPX_SRCS = $(addprefix srcs/, $(SRCS_PIPX))
 

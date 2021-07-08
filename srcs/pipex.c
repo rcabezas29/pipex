@@ -6,59 +6,41 @@
 /*   By: rcabezas <rcabezas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 20:37:16 by rcabezas          #+#    #+#             */
-/*   Updated: 2021/07/07 21:20:24 by rcabezas         ###   ########.fr       */
+/*   Updated: 2021/07/08 13:50:16 by rcabezas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pipex.h>
 
-char	*cmd_path(t_pipex *ps, char *cmd)
-{
-	char	*path;
-	char	*tmp;
-	int		i;
-	int		check_path;
-
-	path = NULL;
-	i = 0;
-	while (ps->paths[i])
-	{
-		tmp = ft_strjoin(ft_strjoin(ps->paths[i], "/"), cmd);
-		check_path = open(tmp, O_RDONLY);
-		if (check_path < 0)
-			i++;
-		else
-		{
-			path = tmp;
-			break ;
-		}
-	}
-	if (!tmp)
-	{
-		ft_putstr(ft_strjoin(cmd, ": command not found"));
-		exit(EXIT_SUCCESS);
-	}
-	return (path);
-}
-
 void	exec_cmd1(t_pipex *ps, int fd[2], char *envp[])
 {
+	char	*path;
+	char	**splitted_cmd;
+
+	path = cmd_path(ps, ps->cmd_one);
+	splitted_cmd = ft_split(ps->cmd_one, ' ');
+	close(fd[READ_END]);
 	ps->file1 = open(ps->archive_one, O_RDONLY);
 	if (ps->file1 == -1)
 	{
 		ft_putstr("Error al abrir archivo\n");
 		exit(EXIT_SUCCESS);
 	}
-	close(fd[READ_END]);
 	dup2(ps->file1, STDIN_FILENO);
+	close(ps->file1);
 	dup2(fd[WRITE_END], STDOUT_FILENO);
 	close(fd[WRITE_END]);
-	execve(cmd_path(ps, ps->cmd_one), ft_split(ps->cmd_one, ' '), envp);
+	execve(path, splitted_cmd, envp);
 }
 
 void	exec_cmd2(t_pipex *ps, int fd[2], char **envp)
 {
-	ps->file2 = open(ps->archive_two, O_WRONLY);
+	char	*path;
+	char	**splitted_cmd;
+
+	path = cmd_path(ps, ps->cmd_two);
+	splitted_cmd = ft_split(ps->cmd_two, ' ');
+	ps->file2 = open(ps->archive_two, O_WRONLY | O_CREAT | O_TRUNC | O_APPEND);
 	if (ps->file2 == -1)
 	{
 		ft_putstr("Error al abrir archivo\n");
@@ -67,20 +49,8 @@ void	exec_cmd2(t_pipex *ps, int fd[2], char **envp)
 	dup2(fd[READ_END], STDIN_FILENO);
 	close(fd[READ_END]);
 	dup2(ps->file2, STDOUT_FILENO);
-	execve(cmd_path(ps, ps->cmd_two), ft_split(ps->cmd_two, ' '), envp);
-}
-
-void	take_paths(t_pipex *ps, char *envp[])
-{
-	int	i;
-
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp("PATH=", envp[i], 5) == 0)
-			ps->paths = ft_split(ft_strchr(envp[i], '/'), ':');
-		i++;
-	}
+	close(ps->file2);
+	execve(path, splitted_cmd, envp);
 }
 
 void	arguments(t_pipex *ps, int argc, char **argv)
@@ -119,8 +89,7 @@ int	main(int argc, char **argv, char *envp[])
 		else
 			close(fd[READ_END]);
 	}
-	waitpid(pid, &status, WNOHANG);
-	close(ps->file1);
-	close(ps->file2);
+	wait(&status);
+	wait(&status);
 	return (0);
 }
